@@ -1,0 +1,22 @@
+name: Deploy to K3s
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up kubectl
+        run: |
+          export KUBECONFIG=$HOME/.kube/config
+          kubectl version --client
+
+      - name: Deploy to K3s
+        run: |
+          kubectl apply -f deployment.yaml
