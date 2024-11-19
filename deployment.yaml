@@ -31,4 +31,5 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80  # Apacheのポート
-  type: LoadBalancer  # 外部アクセスが必要な場合は LoadBalancer
+      nodePort: 30080  # 任意のポート番号
+  type: NodePort  # NodePortに変更
