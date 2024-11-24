@@ -1,35 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: apache-deployment
+  name: gemma-server
   labels:
-    app: apache
+    app: gemma-server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: apache
+      app: gemma-server
   template:
     metadata:
       labels:
-        app: apache
+        app: gemma-server
     spec:
       containers:
-        - name: apache
-          image: httpd:latest  # Apacheの公式Dockerイメージ
-          ports:
-            - containerPort: 80  # Apacheがリッスンするポート
+      - name: gemma-server
+        image: localhost:5000/gemma-server:latest  # ローカルのDockerイメージを指定
+        ports:
+        - containerPort: 8000
+        env:
+        - name: HF_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: huggingface-secret
+              key: HF_TOKEN
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: apache-service
+  name: gemma-server
 spec:
   selector:
-    app: apache
+    app: gemma-server
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 80  # Apacheのポート
-      nodePort: 30080  # 任意のポート番号
-  type: NodePort  # NodePortに変更
+      port: 8000
+      targetPort: 8000
+      nodePort: 30000  # NodePort用に指定するポート番号
+  type: NodePort
